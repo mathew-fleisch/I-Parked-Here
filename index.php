@@ -6,9 +6,7 @@
 	<link rel="stylesheet" href="inc/mobiscroll-2.4.5/css/mobiscroll.custom-2.4.5.min.css" type="text/css" />
 	<script type="text/javascript" src="inc/jquery.js"></script>
 	<script type="text/javascript" src="inc/mobiscroll-2.4.5/js/mobiscroll.custom-2.4.5.min.js"></script>
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKkKDJv0w_PNNvXsvn_Kp1-GZnSUbID1s&sensor=true">
-    </script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKkKDJv0w_PNNvXsvn_Kp1-GZnSUbID1s&sensor=true"></script>
      <?php 
     	$get = file_get_contents("crnt_position.txt");
     	if($get) {
@@ -24,7 +22,15 @@
     	$days = array('Sunday','Monday', 'Tuesday','Wednesday','Thursday','Friday','Saturday');
     	$day_str = $days[$day];
     ?>
-    <script type="text/javascript" src="control.js"></script>
+    <script type="text/javascript" src="inc/control.js"></script>
+    <script type="text/javascript">
+    	window.crnt_location = "<?=$lat?>,<?=$lon?>";
+    	window.crnt_day = daysInWeek_arr["<?=$day?>"];
+    	window.crnt_hour = <?=$hour?>;
+    	window.crnt_min = <?=$min?>;
+	window.lat = "<?=$lat?>";
+	window.lon = "<?=$lon?>";
+    </script>
   </head>
   <body>
   	<div id="buttons_container">
@@ -41,6 +47,7 @@
   		<div id="time"></div>
   		<button id="save">Save</button>
   	</div>
+	<div id="debug"></div>
   	<div id="canvas-holder"><div id="map-canvas"></div></div>
   </body>
 </html>
