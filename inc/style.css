@@ -1,45 +1,58 @@
-body { font-family: Helvetica, verdana, arial; padding:20px;}
-	#buttons_container {
-		width:750px;
-		margin:0 auto;
-	}
-	#dayofweek {
-		float:left;
-	}
-	#time {
-		float:left;	
-	}
-	.dw-inline {
-		float:left;
-	}
-	.dayofweek_output {
-		display: none;
-	}
-	#save {
-		margin: 35px 0 0 0;
-		width: 100px;
-		height: 130px;
-		float: left;
-		font-size: 30px;
-		text-transform: uppercase;
-		font-weight: bold;
-	}
-	#streetcleaning {
-		float:left;
-		width:170px;
-		height:105px;
-		font-size: 30px;
-		text-transform: uppercase;
-		font-weight: bold;
-		text-align:center;
-		padding: 65px 0 0 0;
-	}
+body { font-family: Helvetica, verdana, arial; min-width:320px; min-height:500px; position:fixed; width:100%; overflow:hidden; }
+#page-container { 
+	margin:20px;
+	position:relative;
+	text-align:center;
+	width:auto;
+}
+#buttons-container {
+	width:auto;
+	margin:10px auto;
+	text-align:center;
+}
+
+#dayofweek {
+	float:left;
+}
+#time {
+	float:left;	
+}
+.dw-inline {
+	float:left;
+}
+.dayofweek_output {
+	display: none;
+}
+#save {
+	margin: 35px 0 0 0;
+	width: 100px;
+	height: 130px;
+	float: left;
+	font-size: 30px;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+#streetcleaning {
+	float:left;
+	width:170px;
+	height:105px;
+	font-size: 30px;
+	text-transform: uppercase;
+	font-weight: bold;
+	text-align:center;
+	padding: 65px 0 0 0;
+}
+.clear { clear:both; } 
 /*@media screen and (min-device-width: 600px) {*/
 	#map-canvas { 
-		width:930px;
-		height:1250px;
+		width:auto;
+		height:100%;
+		min-width:300px;
+		min-height:400px;
 	}
 	/*
+		width:930px;
+		height:1250px;
 }
 @media screen and (max-device-width: 599px) {
 	#map-canvas { 

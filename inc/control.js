@@ -2,6 +2,11 @@ var daysInWeek = {'Sunday':0, 'Monday':1, 'Tuesday':2, 'Wednesday':3, 'Thursday'
 var daysInWeek_arr = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 $(document).ready(function(){
     	console.log("Loaded Data: \n"+window.crnt_day+"\n"+window.crnt_hour+":"+window.crnt_min+"\n"+window.crnt_location);
+	//$("body").css("height", $(document).height()+"px");
+	var button_padding = (parseInt($("#buttons-container").css("margin-top").replace(/px/, ""))+parseInt($("#buttons-container").css("margin-bottom").replace(/px/, "")));
+	var map_height = ($(document).height()-$("#buttons-container").height()-button_padding-100);
+	console.log("Button Padding: "+button_padding+"\nMap Height: "+map_height);
+	$("#canvas-holder").css("height", map_height+"px");
 	$("#dayofweek").mobiscroll().select({ 
 		theme: 'iOS', 
 		display: 'inline',
