@@ -12,7 +12,7 @@ if(isset($_POST['day']) && isset($_POST['hour']) &&  isset($_POST['min']) && iss
 			fclose($put);
 			echo $day.",".$hour.",".$min.",".$lat.",".$lon;
 			return true;
-		} else { echo "error1"; return false; }
-	} else { echo "error2"; return false; }
-} else { echo "error3"; return false; }
+		} else { echo " ** Error ** Posted data is not in the correct format..."; return false; }
+	} else { echo " ** Error ** Missing Data - Required: Lat/Lon, Day, Hour, Minute..."; return false; }
+} else { echo " ** Error ** Post data missing..."; return false; }
 ?>

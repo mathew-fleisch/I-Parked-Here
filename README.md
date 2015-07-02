@@ -11,4 +11,4 @@ To Do:
   - Set up config file (boundries, center point, zoom level, house)
      - Create wizard when no config file is found to set the values in a UI
   - Verify relative and absolute paths
-  - Make more clear error messages on set_position.php
+  - <strike>Make more clear error messages on set-position.php</strike>
