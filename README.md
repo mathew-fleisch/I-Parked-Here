@@ -6,7 +6,7 @@ Personal parking assistant allows you to quickly save your car's coordinates in 
 Saves a "dropped pin" on a google maps api as a text file and uses coordinates to place an icon, onLoad.
 
 To Do:
-  - Save json file instead of text file and update parser.
+  - <strike>Save json file instead of text file and update parser.</strike>
   - Make output responsive
   - Set up config file (boundries, center point, zoom level, house)
      - Create wizard when no config file is found to set the values in a UI
