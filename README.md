@@ -8,12 +8,12 @@ Saves a "dropped pin" on a google maps api as a json file and uses coordinates t
 ## To Do
 
   - Make output responsive (started)
-  - Set up config file (boundries, center point, zoom level, house)
-     - Create wizard when no config file is found to set the values in a UI
+  - <strike>et up config file (boundries, center point, zoom level, house)</strike>
+     - <strike>Create wizard when no config file is found to set the values in a UI</strike>
   - Verify relative and absolute paths
   - Update Google Maps API
-  - Load json file with js instead of php
-  - Create multiple users on the same instance
+  - <strike>Load json file with js instead of php</strike>
+  - <strike>Create multiple users on the same instance</strike>
      - Save credentials in cookie, but user data in db
   - <strike>Make more clear error messages on set-position.php</strike>
   - <strike>Save json file instead of text file and update parser.</strike>
