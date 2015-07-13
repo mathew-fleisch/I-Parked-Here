@@ -1,7 +1,11 @@
 var daysInWeek = {'Sunday':0, 'Monday':1, 'Tuesday':2, 'Wednesday':3, 'Thursday':4, 'Friday':5, 'Saturday':6};
 var daysInWeek_arr = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+if(!window.lat) { window.lat = 0; }
+if(!window.lon) { window.lon = 0; }
+if(!window.home_lat) { window.home_lat = 0; }
+if(!window.home_lon) { window.home_lon = 0; }
 $(document).ready(function(){
-    	console.log("Loaded Data: \n"+window.crnt_day+"\n"+window.crnt_hour+":"+window.crnt_min+"\n"+window.crnt_location);
+    	//console.log("Loaded Data: \n"+window.crnt_day+"\n"+window.crnt_hour+":"+window.crnt_min+"\n"+window.crnt_location);
 	//$("body").css("height", $(document).height()+"px");
 	var button_padding = (parseInt($("#buttons-container").css("margin-top").replace(/px/, ""))+parseInt($("#buttons-container").css("margin-bottom").replace(/px/, "")));
 	var map_height = ($(document).height()-$("#buttons-container").height()-button_padding-100);
@@ -18,10 +22,208 @@ $(document).ready(function(){
     		display: 'inline'    		
      	});
      	
-     	var temp_date = new Date("01/01/2013 "+(window.crnt_hour < 10 ? '0'+window.crnt_hour : window.crnt_hour)+":"+(window.crnt_min < 10 ? '0'+window.crnt_min : window.crnt_min)+":00 PST");
-     	$("#time").mobiscroll('setDate', temp_date, true, 300);
+     	//var loaded_date = new Date("01/01/2013 "+(window.crnt_hour < 10 ? '0'+window.crnt_hour : window.crnt_hour)+":"+(window.crnt_min < 10 ? '0'+window.crnt_min : window.crnt_min)+":00 PST");
+     	//$("#time").mobiscroll('setDate', loaded_date, true, 300);
      	
-     	$("#save").click(function() {
+
+	$(document).on("click", "#logout", function() { 
+		console.log("[BUTTON CLICK]: Log Out");
+		$("#login-container").show();
+		$.ajax({
+			type: "POST",
+			url: "../login.php",
+			data: { 
+				"logout": true
+			},
+			success: function(res) { 
+				if(res['error']) { 
+					if(res['message']) { 
+						console.error(res['message']);
+						alert(res['message']);
+					} else { console.error(res); }
+				} else { 
+					if(res['message']) { 
+						console.log(res['message']);
+						$("#buttons-container,#canvas-holder").hide();
+					} else { console.error(res); } 
+				}
+			},
+			error: function(data, ajaxOptions, thrownError) {
+				console.error(data, ajaxOptions, thrownError);
+			}
+		});
+	});
+
+	$(document).on("click", "#login-register", function() { 
+		console.log("[BUTTON CLICK]: Login/Register");
+		$("#login-container").hide();
+		var email	= $("#email").val();
+		var pin		= parseInt($("#pin").val());
+		$.ajax({
+			type: "POST",
+			url: "../login.php",
+			data: { 
+				"login-register": true,
+				email: email,
+				pin: pin
+			},
+			success: function(res) { 
+				$("#email,#pin").val("");
+				if(res['error']) { 
+					if(res['message']) { 
+						console.error(res['message']);
+						alert(res['message']);
+						$("#login-container").show();
+					} else { console.error(res); }
+				} else { 
+					if(res['message']) { 
+						console.log(res['message']);
+						$.ajax({
+							type: "POST",
+							url: "../set-home.php",
+							data: { 
+								"get-home": true
+							},
+							success: function(home_res) { 
+								console.log("Get Home Response:");
+								console.log(home_res);
+								if(parseInt(home_res['error']) > 1) { 
+									console.log("Home not set... Set it!");
+									$("#set-home-container").show();
+								} else if(home_res['error']) { 
+									console.log("Error response: ");
+									console.error(home_res['message']);
+								} else {
+									// User has defined "home"
+									console.log("Home previously set!");
+									window.home_lat = home_res['lat'];
+									window.home_lon = home_res['lon'];
+									$("#buttons-container").slideDown(300, function() {
+										$("#load-position").click();
+									});
+								}
+							},
+							error: function(data, ajaxOptions, thrownError) {
+								console.log(data, ajaxOptions, thrownError);
+							}
+						});
+
+					} else { console.error(res); } 
+				}
+			},
+			error: function(data, ajaxOptions, thrownError) {
+				console.error(data, ajaxOptions, thrownError);
+			}
+		});
+	});
+
+
+
+	$(document).on("click", "#clear-home", function() { 
+		console.log("[BUTTON CLICK]: Clear Home Position");
+		$.ajax({
+			type: "POST",
+			url: "../set-home.php",
+			data: { 
+				"clear-home": true
+			},
+			success: function(res) { 
+				console.log("Clear Home Response:");
+				console.log(res);
+				$("#buttons-container,#canvas-holder").hide();
+				$("#set-home-container").show();
+			},
+			error: function(data, ajaxOptions, thrownError) {
+				console.error(data, ajaxOptions, thrownError);
+			}
+		});
+	});
+
+	$(document).on("click", "#set-home-button", function() { 
+		console.log("[BUTTON CLICK]: Set Home Position");
+		var geocoder = new google.maps.Geocoder();
+		var address = $("#home-input").val();
+		console.log("Look up: "+address);
+		geocoder.geocode({ 'address': address }, function (results, status) {
+			if (status == google.maps.GeocoderStatus.OK) {
+				var latitude = results[0].geometry.location.lat();
+				var longitude = results[0].geometry.location.lng();
+				window.home_lat = latitude;
+				window.home_lon = longitude;
+				console.log("Latitude: " + latitude + "\nLongitude: " + longitude);
+				$.ajax({
+					type: "POST",
+					url: "../set-home.php",
+					data: { 
+						"set-home": true,
+						address: address,
+						lat: latitude,
+						lon: longitude
+					},
+					success: function(res) { 
+						console.log("Set Home Response:");
+						console.log(res);
+						$("#buttons-container").slideDown(300);
+						//google.maps.event.addDomListener(window, 'load', initialize);
+						//initialize();
+						$("#get-position").click();
+					},
+					error: function(data, ajaxOptions, thrownError) {
+						console.error(data, ajaxOptions, thrownError);
+					}
+				});
+
+			} else {
+				console.error("Request failed.");
+			}
+		});
+
+	});
+
+
+	$(document).on("click", "#get-position", function() { 
+		console.log("[BUTTON CLICK]: Get Position()");
+		var startPos;
+		var geoSuccess = function(position) {
+			startPos = position;
+			console.log("Lat: "+startPos.coords.latitude);
+			console.log("Lon: "+startPos.coords.longitude);
+			draw_map(window.home_lat, window.home_lon, startPos.coords.latitude, startPos.coords.longitude);
+		};
+		navigator.geolocation.getCurrentPosition(geoSuccess);
+	});
+
+	$(document).on("click", "#load-position", function() { 
+		console.log("[BUTTON CLICK]: Load Position()");
+  		$.ajax({
+			type: "POST",
+			url: "../set_position.php",
+			data: {
+				"get-position": true
+			},
+			success: function(data) {
+				console.log("Car Position Loaded: ");
+				console.log(data);
+				if(data['error']) { 
+					$("#get-position").click();
+					return false;
+				} else { 
+					draw_map(window.home_lat, window.home_lon, data['lat'], data['lon']);
+					var loaded_date = new Date("01/01/2015 "+pad_zero(data['hour'])+":"+pad_zero(data['min'])+":00 PST");
+					console.log("Date Loaded: "+loaded_date);
+					$("#time").mobiscroll('setDate', loaded_date, true, 300);
+					$("#dayofweek li").prop("selected", "");
+					$("#day-"+daysInWeek_arr[data['day']].toLowerCase()).prop("selected", "selected");
+				}
+			},
+			error: function(data, ajaxOptions, thrownError) {
+				console.error(data, ajaxOptions, thrownError);
+			}
+		});
+	});
+
+     	$(document).on("click", "#save", function() {
+		console.log("[BUTTON CLICK]: Save Position");
      		var time_str = $("#time").mobiscroll('getDate');
      		var time = String(time_str).replace(/:00\ GMT.*/, "").substring(16);
      		var time_spl = time.split(/:/);
@@ -41,6 +243,7 @@ $(document).ready(function(){
 			type: "POST",
 			url: "../set_position.php",
 			data: {
+				"set-position": true,
 				day: dayofweek,
 				hour: tmp_hour,
 				min: tmp_min,
@@ -48,67 +251,55 @@ $(document).ready(function(){
 				lon: tmp_lon                      
 			},
 			success: function(data) {
-				console.log("Saved: "+data);
+				console.log("Car Position Saved: ");
+				console.log(data);
 				//$("#debug").html(data);
+			},
+			error: function(data, ajaxOptions, thrownError) {
+				console.error(data, ajaxOptions, thrownError);
 			}
 		});
 	});     	
 });
+
+
+function pad_zero(number) { 
+	return parseInt((number < 10 ? number : '0'+number));
+}
     
-    
-    
-    
-    
-//Google Maps Stuff
-function initialize() {
-	var mapOptions = {
-		center: new google.maps.LatLng(37.79012474939018,-122.42666244506836),
-		zoom: 17,
-		mapTypeId: google.maps.MapTypeId.ROADMAP
-	};
-	var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-	var boundryCoordinates = [
-		new google.maps.LatLng(37.78849684470596,-122.42193102836609),
-		new google.maps.LatLng(37.79302436577276,-122.42287516593933),
-		new google.maps.LatLng(37.79195609929177,-122.43112564086914),
-		new google.maps.LatLng(37.78746242830388,-122.4301278591156),
-		
-		new google.maps.LatLng(37.78849684470596,-122.42193102836609)
-		//new google.maps.LatLng(37.784425, -122.432859),
-		
-		//new google.maps.LatLng(37.785799, -122.421508)
-	];
-	var boundry = new google.maps.Polyline({
-		path: boundryCoordinates,
-		strokeColor: "#FF0000",
-		strokeOpacity: 1.0,
-		strokeWeight: 2
-	});
+function draw_map(home_lat, home_lon, car_lat, car_lon) { 
+	console.log("Draw Map!");
 	var home_icon = "inc/home.png";
 	var car_icon = "inc/car.png";
-	//var home = new google.maps.LatLng(37.788817,-122.424405);
-	var home = new google.maps.LatLng(37.79077759692252,-122.42433428764343);
-	var home_marker = new google.maps.Marker({
-		position: home,
-		map: map,
-		title:"Home.",
-		icon: home_icon
-	});
-	var car_marker;
-	
-	car_loaded_loc = new google.maps.LatLng(window.lat,window.lon);
+	var mapOptions = {
+		center: new google.maps.LatLng(home_lat, home_lon),
+		zoom: 16,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	console.log("Map options set");
+	var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+	car_loaded_loc = new google.maps.LatLng(car_lat,car_lon);
 	car_marker = new google.maps.Marker({
 		position: car_loaded_loc,
 		map: map,
 		title:"This is where I parked. Loaded from file.",
 		icon: car_icon
 	});
-	
+	console.log("Car marker set");
+	var home = new google.maps.LatLng(home_lat,home_lon);
+	var home_marker = new google.maps.Marker({
+		position: home,
+		map: map,
+		title:"Home.",
+		icon: home_icon
+	});
+	console.log("Home marker set");
 	google.maps.event.addListener(map, 'click', function(event) { 
 		if(car_marker) { car_marker.setMap(null); }
 		var car_location = new google.maps.LatLng(event.latLng.lat(),event.latLng.lng());
 		window.crnt_location = event.latLng.lat()+","+event.latLng.lng();
 		console.log(window.crnt_location);
+		$("#save").click();
 		car_marker = new google.maps.Marker({
 			position: car_location,
 			map: map,
@@ -116,6 +307,4 @@ function initialize() {
 			icon: car_icon
 		});
 	});
-	boundry.setMap(map); 		
 }
-google.maps.event.addDomListener(window, 'load', initialize);

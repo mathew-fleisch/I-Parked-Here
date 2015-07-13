@@ -5,10 +5,19 @@ body { font-family: Helvetica, verdana, arial; min-width:320px; min-height:500px
 	text-align:center;
 	width:auto;
 }
+#set-home-container { 
+	display:none;
+}
+#home-input { 
+	font-family: helvetica, verdana, arial;
+	font-size:1.2em;
+	width: 400px;
+}
 #buttons-container {
 	width:auto;
 	margin:10px auto;
 	text-align:center;
+	display:none;
 }
 
 #dayofweek {
@@ -23,20 +32,29 @@ body { font-family: Helvetica, verdana, arial; min-width:320px; min-height:500px
 .dayofweek_output {
 	display: none;
 }
-#save {
-	margin: 35px 0 0 0;
+#save,#logout,#clear-home,#load-position,#get-position {
+	margin: 35px 4px 0 0;
 	width: 100px;
 	height: 130px;
 	float: left;
-	font-size: 30px;
+	font-size: 17px;
 	text-transform: uppercase;
 	font-weight: bold;
 }
+#load-position { display: none; } 
+
+#login-container {
+	text-align:right;
+	width:200px;
+	padding:10px;
+	border:1px solid black;
+	line-height:30px;
+}
 #streetcleaning {
 	float:left;
-	width:170px;
+	width:120px;
 	height:105px;
-	font-size: 30px;
+	font-size: 20px;
 	text-transform: uppercase;
 	font-weight: bold;
 	text-align:center;
